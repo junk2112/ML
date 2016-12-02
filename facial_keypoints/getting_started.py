@@ -11,6 +11,7 @@ random.seed(seed)
 np.random.seed(seed)
 img_size = 96
 
+
 def get_averages():
     with open("facial_data/training.csv") as csvfile:
         data = csv.reader(csvfile)
@@ -26,6 +27,7 @@ def get_averages():
         avg = list(chunks(list(zip(headers[:-1], avg)), 2))
         avg = {item[0][0]+"/"+item[1][0]: (item[0][1], item[1][1]) for item in avg}
         return avg
+
 
 def get_average_patch(point_name, radius):
     with open("facial_data/training.csv") as csvfile:
@@ -59,7 +61,6 @@ def get_average_patch(point_name, radius):
                     pass
         average_patch = np.asarray([item/count for item in average_patch])
         return average_patch
-
 
 
 def get_test_data(patch_radius, point_name, averages):
@@ -119,7 +120,7 @@ def patch(arr, x, y, r, for_train=False):
     patch = [row[x-r:x+r+1] for row in rows]
     if for_train:
         patch = np.asarray(patch)
-    return patch 
+    return patch
 
 
 def get_patches_around(image, x, y, r_all, r_one):
@@ -153,9 +154,9 @@ for point_name in point_names:
     test_data = get_test_data(patch_radius, point_name, average_xy)
     average_patch = get_average_patch(point_name, patch_radius)
     for idx, image in test_data:
-        patches = get_patches_around(image, avg_xy[0], avg_xy[1], 3, patch_radius)
+        patches = get_patches_around(
+            image, avg_xy[0], avg_xy[1], 3, patch_radius)
         correlations = [correlation(p[1], average_patch) for p in patches]
         point = patches[correlations.index(max(correlations))][0]
         show(image, point[0], point[1])
         input()
-
